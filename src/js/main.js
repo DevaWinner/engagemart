@@ -1,10 +1,20 @@
-import { loadHeaderFooter, showSpinner, showError } from './utils.mjs';
+import { loadHeaderFooter, showSpinner, showError, setupSearch, getParam } from './utils.mjs';
 import ProductData from './ProductData.mjs';
 import ProductList from './ProductList.mjs';
+import WishList from './WishList.mjs';
 
 document.addEventListener('DOMContentLoaded', async () => {
   // Load header and footer partials
   await loadHeaderFooter();
+
+  // Initialize wishlist count
+  const wishlist = new WishList();
+  const count = wishlist.getItems().length;
+  const countElement = document.querySelector('#wishlist-count');
+  if (countElement) {
+    countElement.textContent = count;
+    countElement.style.display = count > 0 ? 'inline' : 'none';
+  }
 
   const mainContent = document.getElementById('main-content');
   if (!mainContent) return;
@@ -20,39 +30,40 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
+    // Check for search parameters
+    const searchTerm = getParam('search');
+    const category = getParam('category');
+    
+    let displayProducts = products;
+    if (searchTerm || category) {
+      displayProducts = products.filter(product => {
+        const matchesSearch = !searchTerm || 
+          product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          product.description.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = !category || 
+          product.category.toLowerCase() === category.toLowerCase();
+        return matchesSearch && matchesCategory;
+      });
+
+      // Update form inputs to match URL parameters
+      document.querySelectorAll('#searchInput').forEach(input => {
+        input.value = searchTerm || '';
+      });
+      document.querySelectorAll('#filterSelect').forEach(select => {
+        select.value = category || '';
+      });
+    }
+
     // Render the full product grid
-    const productList = new ProductList(products, '#main-content');
+    const productList = new ProductList(displayProducts, '#main-content');
     productList.init();
 
-    // Set up search & filter functionality (if form exists)
-    const searchForm = document.getElementById('searchForm');
-    if (searchForm) {
-      const searchInput = document.getElementById('searchInput');
-      const filterSelect = document.getElementById('filterSelect');
+    // Setup search with a callback to re-render products
+    setupSearch(products, (filteredProducts) => {
+      const filteredList = new ProductList(filteredProducts, '#main-content');
+      filteredList.init();
+    });
 
-      const filterAndRender = () => {
-        const searchTerm = searchInput.value.toLowerCase();
-        const selectedCategory = filterSelect.value.toLowerCase();
-        const filteredProducts = products.filter((product) => {
-          const matchesSearch =
-            product.title.toLowerCase().includes(searchTerm) ||
-            product.description.toLowerCase().includes(searchTerm);
-          const matchesCategory = selectedCategory
-            ? product.category.toLowerCase() === selectedCategory
-            : true;
-          return matchesSearch && matchesCategory;
-        });
-        const filteredList = new ProductList(filteredProducts, '#main-content');
-        filteredList.init();
-      };
-
-      searchForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        filterAndRender();
-      });
-      searchInput.addEventListener('input', filterAndRender);
-      filterSelect.addEventListener('change', filterAndRender);
-    }
   } catch (error) {
     console.error('Error fetching products:', error);
     showError(

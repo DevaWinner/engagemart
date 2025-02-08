@@ -1,30 +1,70 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav
+  class="navbar navbar-expand-lg navbar-light bg-light nav fixed-top shadow-sm"
+>
   <div class="container d-flex justify-content-between">
     <div class="logo">
-      <img src="/public/images/logo.svg" alt="EngageMart Logo" height="40" />
       <a href="/index.html" class="ms-2">EngageMart</a>
     </div>
-    <div class="container">
-      <form class="d-flex ms-auto" id="searchForm">
+    <div class="d-none d-md-block">
+      <form class="ms-auto d-flex" id="searchForm" data-page="index">
         <input
-          class="form-control me-2"
+          class="form-control me-2 w-100"
           type="search"
           placeholder="Search products"
           aria-label="Search"
           id="searchInput"
+          name="search"
         />
-        <select class="form-select me-2" id="filterSelect">
+        <select class="form-select me-2 w-50" id="filterSelect" name="category">
           <option value="">All Categories</option>
           <option value="men's clothing">Men's Clothing</option>
           <option value="women's clothing">Women's Clothing</option>
-          <option value="jewelery">Jewelery</option>
+          <option value="jewelry">Jewelry</option>
           <option value="electronics">Electronics</option>
         </select>
-        <button class="btn btn-outline-success" type="submit">Search</button>
+        <button class="btn btn-success" type="submit">Search</button>
       </form>
     </div>
     <div>
-      <a href="/cart/index.html">Cart</a>
+      <a href="/wishlist/index.html" class="position-relative">
+        <i class="bi bi-heart-fill fs-1"></i>
+        <span
+          id="wishlist-count"
+          class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+          style="display: none"
+        >
+          0
+        </span>
+      </a>
     </div>
   </div>
 </nav>
+<div class="container d-flex d-md-none pt-4 mt-5">
+  <form class="ms-auto d-flex gap-1" id="searchForm" data-page="index">
+    <div class="flex-shrink-0">
+      <input
+        class="form-control me-2 w-100"
+        type="search"
+        placeholder="Search products"
+        aria-label="Search"
+        id="searchInput"
+        name="search"
+      />
+    </div>
+    <div>
+      <select
+        class="form-select me-2 flex-grow-1"
+        id="filterSelect"
+        name="category"
+      >
+        <option value="">All Categories</option>
+        <option value="men's clothing">Men's Clothing</option>
+        <option value="women's clothing">Women's Clothing</option>
+        <option value="jewelery">Jewelery</option>
+        <option value="electronics">Electronics</option>
+      </select>
+    </div>
+
+    <button class="btn btn-success flex-grow-1" type="submit">Search</button>
+  </form>
+</div>

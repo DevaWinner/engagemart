@@ -1,6 +1,6 @@
-import { renderWithTemplate, setLocalStorage, getLocalStorage } from './utils.mjs';
-import ShoppingCart from './ShoppingCart.mjs';
+import { renderWithTemplate, setupSearch } from './utils.mjs';
 import { CommentsLikes } from './CommentsLikes.mjs';
+import WishList from './WishList.mjs';
 
 export default class ProductDetails {
   constructor(product, dataSource) {
@@ -11,11 +11,14 @@ export default class ProductDetails {
                     'visitor_' + Math.random().toString(36).substring(2, 15);
     sessionStorage.setItem('visitorId', this.sessionId);
     this.commentsLikes = new CommentsLikes();
+    this.wishlist = new WishList();
   }
 
   async init() {
     this.renderProductDetails();
     this.setupEventListeners();
+    // Initialize search functionality without products array
+    setupSearch(null, null);
     // Load current likes and comments from Supabase
     await this.commentsLikes.updateLikeUI(this.product.id, '#likeBtn', '#likesCount', this.sessionId);
     await this.commentsLikes.loadComments(this.product.id, '#commentsContainer');
@@ -24,6 +27,7 @@ export default class ProductDetails {
   renderProductDetails() {
     const container = document.getElementById('main-content');
     if (!container) return;
+    const isInWishlist = this.wishlist.isInWishlist(this.product.id);
     container.innerHTML = `
       <div class="row">
         <div class="col-md-6">
@@ -34,11 +38,10 @@ export default class ProductDetails {
           <h4 class="text-muted">$${this.product.price}</h4>
           <p>${this.product.description}</p>
           <div class="mb-3">
-            <button id="likeBtn" class="btn btn-outline-primary">Like</button>
-            <span id="likesCount" class="ms-2">Likes: 0</span>
-          </div>
-          <div class="mb-3">
-            <button id="addToCartBtn" class="btn btn-success">Add to Cart</button>
+            <button id="wishlistBtn" class="btn ${isInWishlist ? 'btn-danger' : 'btn-outline-danger'}">
+              <i class="bi bi-heart${isInWishlist ? '-fill' : ''}"></i>
+              ${isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
+            </button>
           </div>
         </div>
       </div>
@@ -67,6 +70,25 @@ export default class ProductDetails {
   }
 
   setupEventListeners() {
+    // Wishlist button
+    const wishlistBtn = document.getElementById('wishlistBtn');
+    if (wishlistBtn) {
+      wishlistBtn.addEventListener('click', () => {
+        if (this.wishlist.isInWishlist(this.product.id)) {
+          this.wishlist.removeItem(this.product.id);
+          wishlistBtn.classList.remove('btn-danger');
+          wishlistBtn.classList.add('btn-outline-danger');
+          wishlistBtn.innerHTML = '<i class="bi bi-heart"></i> Add to Wishlist';
+        } else {
+          this.wishlist.addItem(this.product);
+          wishlistBtn.classList.remove('btn-outline-danger');
+          wishlistBtn.classList.add('btn-danger');
+          wishlistBtn.innerHTML = '<i class="bi bi-heart-fill"></i> Remove from Wishlist';
+        }
+        this.updateWishlistCount();
+      });
+    }
+
     // Like button
     const likeBtn = document.getElementById('likeBtn');
     if (likeBtn) {
@@ -74,16 +96,8 @@ export default class ProductDetails {
         await this.commentsLikes.handleLikeToggle(this.product.id, '#likeBtn', '#likesCount', this.sessionId);
       });
     }
-    // Add to Cart button
-    const addToCartBtn = document.getElementById('addToCartBtn');
-    if (addToCartBtn) {
-      addToCartBtn.addEventListener('click', () => {
-        const cart = new ShoppingCart('em-cart', '.cart-list');
-        const count = cart.addItem(this.product);
-        alert(`Product added to cart. You now have ${count} item(s) in your cart.`);
-      });
-    }
-    // Comment form
+
+    // Comment form handling
     const commentForm = document.getElementById('commentForm');
     if (commentForm) {
       // Save name as user types
@@ -107,6 +121,15 @@ export default class ProductDetails {
           // Don't clear the name field - keep it for next comment
         }
       });
+    }
+  }
+
+  updateWishlistCount() {
+    const count = this.wishlist.getItems().length;
+    const countElement = document.querySelector('#wishlist-count');
+    if (countElement) {
+      countElement.textContent = count;
+      countElement.style.display = count > 0 ? 'inline' : 'none';
     }
   }
 }

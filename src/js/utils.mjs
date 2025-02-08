@@ -72,3 +72,41 @@ export function showError(containerSelector, message) {
     `;
   }
 }
+
+export function setupSearch(products, renderFn) {
+  const forms = document.querySelectorAll('form[id="searchForm"]');
+  forms.forEach(form => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const searchInput = form.querySelector('input[type="search"]');
+      const filterSelect = form.querySelector('select');
+      const searchTerm = searchInput?.value || '';
+      const category = filterSelect?.value || '';
+
+      // Build search URL params
+      const searchParams = new URLSearchParams();
+      if (searchTerm) searchParams.append('search', searchTerm);
+      if (category) searchParams.append('category', category);
+
+      // If not on index page OR there are no products (meaning we're not on main page)
+      if (!products || !window.location.pathname.endsWith('/index.html')) {
+        // Navigate to home page with search params
+        window.location.href = `/index.html${searchParams.toString() ? '?' + searchParams.toString() : ''}`;
+        return;
+      }
+
+      // Only execute search if we're on index page with products
+      if (renderFn) {
+        const filteredProducts = products.filter(product => {
+          const matchesSearch = !searchTerm || 
+            product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            product.description.toLowerCase().includes(searchTerm.toLowerCase());
+          const matchesCategory = !category || 
+            product.category.toLowerCase() === category.toLowerCase();
+          return matchesSearch && matchesCategory;
+        });
+        renderFn(filteredProducts);
+      }
+    });
+  });
+}
