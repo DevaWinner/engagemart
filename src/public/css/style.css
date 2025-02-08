@@ -2,8 +2,16 @@
   padding: 0.5rem;
 }
 
+.engage-logo {
+  height: 2rem;
+}
+
 @media screen and (min-width: 768px) {
   .nav {
     padding: 0.7rem;
+  }
+
+  .engage-logo {
+    height: 2.5rem;
   }
 }

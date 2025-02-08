@@ -15,12 +15,19 @@ export function getParam(param) {
   return urlParams.get(param);
 }
 
-export function renderWithTemplate(templateFn, parentElement, data, position = 'beforeend', clear = false, callback) {
+export function renderWithTemplate(
+  templateFn,
+  parentElement,
+  data,
+  position = 'beforeend',
+  clear = false,
+  callback
+) {
   if (clear) {
     parentElement.innerHTML = '';
   }
   if (Array.isArray(data)) {
-    const html = data.map(item => templateFn(item)).join('');
+    const html = data.map((item) => templateFn(item)).join('');
     parentElement.insertAdjacentHTML(position, html);
   } else {
     parentElement.insertAdjacentHTML(position, templateFn(data));
@@ -38,8 +45,8 @@ export async function loadTemplate(path) {
 
 export async function loadHeaderFooter() {
   try {
-    const headerTemplate = await loadTemplate('/public/partials/header.html');
-    const footerTemplate = await loadTemplate('/public/partials/footer.html');
+    const headerTemplate = await loadTemplate('/partials/header.html');
+    const footerTemplate = await loadTemplate('/partials/footer.html');
     const headerEl = qs('#main-header');
     const footerEl = qs('#main-footer');
     if (headerEl) headerEl.innerHTML = headerTemplate.innerHTML;
@@ -76,7 +83,7 @@ export function showError(containerSelector, message) {
 
 export function setupSearch(products, renderFn) {
   const forms = document.querySelectorAll('form[id="searchForm"]');
-  forms.forEach(form => {
+  forms.forEach((form) => {
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       const searchInput = form.querySelector('input[type="search"]');
@@ -98,11 +105,15 @@ export function setupSearch(products, renderFn) {
 
       // Only execute search if we're on index page with products
       if (renderFn) {
-        const filteredProducts = products.filter(product => {
-          const matchesSearch = !searchTerm || 
+        const filteredProducts = products.filter((product) => {
+          const matchesSearch =
+            !searchTerm ||
             product.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            product.description.toLowerCase().includes(searchTerm.toLowerCase());
-          const matchesCategory = !category || 
+            product.description
+              .toLowerCase()
+              .includes(searchTerm.toLowerCase());
+          const matchesCategory =
+            !category ||
             product.category.toLowerCase() === category.toLowerCase();
           return matchesSearch && matchesCategory;
         });

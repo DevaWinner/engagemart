@@ -1,7 +1,6 @@
 import { loadHeaderFooter, showSpinner, showError, setupSearch, getParam } from './utils.mjs';
 import ProductData from './ProductData.mjs';
 import ProductList from './ProductList.mjs';
-import WishList from './WishList.mjs';
 
 document.addEventListener('DOMContentLoaded', async () => {
   // Load header and footer partials
