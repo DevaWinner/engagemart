@@ -28,12 +28,12 @@ export default class WishListUI {
 
     container.innerHTML = `
       <div class="row">
-        ${items.map(item => this.wishlistItemTemplate(item)).join('')}
+        ${items.map((item) => this.wishlistItemTemplate(item)).join('')}
       </div>
     `;
 
     // Add event listeners for remove buttons
-    container.querySelectorAll('.remove-from-wishlist').forEach(btn => {
+    container.querySelectorAll('.remove-from-wishlist').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         const productId = parseInt(e.currentTarget.dataset.productId);
         this.wishlist.removeItem(productId);
@@ -45,9 +45,9 @@ export default class WishListUI {
 
   wishlistItemTemplate(product) {
     return `
-      <div class="col-12 col-md-6 col-lg-4 mb-4">
-        <div class="card h-100">
-          <div class="position-relative">
+      <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+        <div class="card h-100 shadow-sm border border-light">
+          <div class="position-relative p-4">
             <img src="${product.image}" class="card-img-top" alt="${product.title}" style="height: 200px; object-fit: contain;">
             <button class="btn position-absolute top-0 end-0 m-2 remove-from-wishlist"
                     data-product-id="${product.id}">
