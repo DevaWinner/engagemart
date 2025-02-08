@@ -1,4 +1,3 @@
-import { renderWithTemplate } from './utils.mjs';
 import WishList from './WishList.mjs';
 
 export default class ProductList {
@@ -12,9 +11,9 @@ export default class ProductList {
     const isInWishlist = this.wishlist.isInWishlist(product.id);
     return `
       <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
-        <div class="card h-100">
-          <div class="position-relative">
-            <img src="${product.image}" class="card-img-top" alt="${product.title}" style="height:200px; object-fit:contain;">
+        <div class="card h-100 shadow-sm border border-light">
+          <div class="position-relative p-4">
+            <img src="${product.image}" class="card-img-top" alt="${product.title}" style="height:150px; object-fit:contain;">
             <button class="btn position-absolute top-0 end-0 m-2 wishlist-btn" 
                     data-product-id="${product.id}"
                     title="${isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}">
@@ -36,16 +35,18 @@ export default class ProductList {
     if (!container) return;
     container.innerHTML = '<div class="row" id="productsRow"></div>';
     const row = container.querySelector('#productsRow');
-    row.innerHTML = this.products.map(prod => this.productCardTemplate(prod)).join('');
-    
+    row.innerHTML = this.products
+      .map((prod) => this.productCardTemplate(prod))
+      .join('');
+
     // Add event listeners for wishlist buttons
-    row.querySelectorAll('.wishlist-btn').forEach(btn => {
+    row.querySelectorAll('.wishlist-btn').forEach((btn) => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
         const productId = parseInt(btn.dataset.productId);
-        const product = this.products.find(p => p.id === productId);
+        const product = this.products.find((p) => p.id === productId);
         const icon = btn.querySelector('i');
-        
+
         if (this.wishlist.isInWishlist(productId)) {
           this.wishlist.removeItem(productId);
           icon.classList.remove('bi-heart-fill', 'text-danger');

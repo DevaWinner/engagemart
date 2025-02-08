@@ -5,16 +5,7 @@ import WishList from './WishList.mjs';
 
 document.addEventListener('DOMContentLoaded', async () => {
   // Load header and footer partials
-  await loadHeaderFooter();
-
-  // Initialize wishlist count
-  const wishlist = new WishList();
-  const count = wishlist.getItems().length;
-  const countElement = document.querySelector('#wishlist-count');
-  if (countElement) {
-    countElement.textContent = count;
-    countElement.style.display = count > 0 ? 'inline' : 'none';
-  }
+  await loadHeaderFooter(); // This now handles wishlist count update
 
   const mainContent = document.getElementById('main-content');
   if (!mainContent) return;

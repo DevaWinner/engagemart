@@ -44,6 +44,7 @@ export async function loadHeaderFooter() {
     const footerEl = qs('#main-footer');
     if (headerEl) headerEl.innerHTML = headerTemplate.innerHTML;
     if (footerEl) footerEl.innerHTML = footerTemplate.innerHTML;
+    updateWishlistCount(); // Add this line
   } catch (error) {
     console.error('Error loading header/footer:', error);
   }
@@ -109,4 +110,13 @@ export function setupSearch(products, renderFn) {
       }
     });
   });
+}
+
+export function updateWishlistCount() {
+  const items = JSON.parse(localStorage.getItem('em-wishlist')) || [];
+  const countElement = document.querySelector('#wishlist-count');
+  if (countElement) {
+    countElement.textContent = items.length;
+    countElement.style.display = items.length > 0 ? 'inline' : 'none';
+  }
 }

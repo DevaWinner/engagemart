@@ -7,8 +7,9 @@ export default class ProductDetails {
     this.product = product;
     this.dataSource = dataSource;
     // Generate a random session ID for the current browser session
-    this.sessionId = sessionStorage.getItem('visitorId') || 
-                    'visitor_' + Math.random().toString(36).substring(2, 15);
+    this.sessionId =
+      sessionStorage.getItem('visitorId') ||
+      'visitor_' + Math.random().toString(36).substring(2, 15);
     sessionStorage.setItem('visitorId', this.sessionId);
     this.commentsLikes = new CommentsLikes();
     this.wishlist = new WishList();
@@ -20,8 +21,16 @@ export default class ProductDetails {
     // Initialize search functionality without products array
     setupSearch(null, null);
     // Load current likes and comments from Supabase
-    await this.commentsLikes.updateLikeUI(this.product.id, '#likeBtn', '#likesCount', this.sessionId);
-    await this.commentsLikes.loadComments(this.product.id, '#commentsContainer');
+    await this.commentsLikes.updateLikeUI(
+      this.product.id,
+      '#likeBtn',
+      '#likesCount',
+      this.sessionId
+    );
+    await this.commentsLikes.loadComments(
+      this.product.id,
+      '#commentsContainer'
+    );
   }
 
   renderProductDetails() {
@@ -29,7 +38,7 @@ export default class ProductDetails {
     if (!container) return;
     const isInWishlist = this.wishlist.isInWishlist(this.product.id);
     container.innerHTML = `
-      <div class="row">
+      <div class="row p-3">
         <div class="col-md-6">
           <img src="${this.product.image}" alt="${this.product.title}" class="img-fluid" />
         </div>
@@ -37,16 +46,20 @@ export default class ProductDetails {
           <h2>${this.product.title}</h2>
           <h4 class="text-muted">$${this.product.price}</h4>
           <p>${this.product.description}</p>
-          <div class="mb-3">
-            <button id="wishlistBtn" class="btn ${isInWishlist ? 'btn-danger' : 'btn-outline-danger'}">
+          <div class="mb-3 d-flex gap-2">
+            <button id="likeBtn" class="btn btn-outline-primary">
+              <i class="bi bi-hand-thumbs-up"></i> Like
+            </button>
+            <span id="likesCount" class="btn btn-light disabled">0 likes</span>
+          </div>
+          <button id="wishlistBtn" class="btn ${isInWishlist ? 'btn-danger' : 'btn-outline-danger'}">
               <i class="bi bi-heart${isInWishlist ? '-fill' : ''}"></i>
               ${isInWishlist ? 'Remove from Wishlist' : 'Add to Wishlist'}
             </button>
-          </div>
         </div>
       </div>
       <hr/>
-      <div>
+      <div class="p-3">
         <h4>Comments</h4>
         <div id="commentsContainer"></div>
         <form id="commentForm" class="mt-3">
@@ -70,6 +83,19 @@ export default class ProductDetails {
   }
 
   setupEventListeners() {
+    // Like button
+    const likeBtn = document.getElementById('likeBtn');
+    if (likeBtn) {
+      likeBtn.addEventListener('click', async () => {
+        await this.commentsLikes.handleLikeToggle(
+          this.product.id,
+          '#likeBtn',
+          '#likesCount',
+          this.sessionId
+        );
+      });
+    }
+
     // Wishlist button
     const wishlistBtn = document.getElementById('wishlistBtn');
     if (wishlistBtn) {
@@ -83,17 +109,10 @@ export default class ProductDetails {
           this.wishlist.addItem(this.product);
           wishlistBtn.classList.remove('btn-outline-danger');
           wishlistBtn.classList.add('btn-danger');
-          wishlistBtn.innerHTML = '<i class="bi bi-heart-fill"></i> Remove from Wishlist';
+          wishlistBtn.innerHTML =
+            '<i class="bi bi-heart-fill"></i> Remove from Wishlist';
         }
         this.updateWishlistCount();
-      });
-    }
-
-    // Like button
-    const likeBtn = document.getElementById('likeBtn');
-    if (likeBtn) {
-      likeBtn.addEventListener('click', async () => {
-        await this.commentsLikes.handleLikeToggle(this.product.id, '#likeBtn', '#likesCount', this.sessionId);
       });
     }
 
@@ -109,7 +128,8 @@ export default class ProductDetails {
       commentForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         const commentText = document.getElementById('commentText').value.trim();
-        const userName = document.getElementById('commentName').value.trim() || 'Anonymous';
+        const userName =
+          document.getElementById('commentName').value.trim() || 'Anonymous';
         if (commentText) {
           await this.commentsLikes.postComment(
             this.product.id,
