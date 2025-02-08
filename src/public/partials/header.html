@@ -1,0 +1,30 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container d-flex justify-content-between">
+    <div class="logo">
+      <img src="/public/images/logo.svg" alt="EngageMart Logo" height="40" />
+      <a href="/index.html" class="ms-2">EngageMart</a>
+    </div>
+    <div class="container">
+      <form class="d-flex ms-auto" id="searchForm">
+        <input
+          class="form-control me-2"
+          type="search"
+          placeholder="Search products"
+          aria-label="Search"
+          id="searchInput"
+        />
+        <select class="form-select me-2" id="filterSelect">
+          <option value="">All Categories</option>
+          <option value="men's clothing">Men's Clothing</option>
+          <option value="women's clothing">Women's Clothing</option>
+          <option value="jewelery">Jewelery</option>
+          <option value="electronics">Electronics</option>
+        </select>
+        <button class="btn btn-outline-success" type="submit">Search</button>
+      </form>
+    </div>
+    <div>
+      <a href="/cart/index.html">Cart</a>
+    </div>
+  </div>
+</nav>
