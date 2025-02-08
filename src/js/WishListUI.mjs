@@ -57,7 +57,7 @@ export default class WishListUI {
           <div class="card-body d-flex flex-column">
             <h5 class="card-title">${product.title}</h5>
             <p class="card-text">$${product.price}</p>
-            <a href="/productDetails/index.html?id=${product.id}" class="btn btn-primary mt-auto">View Details</a>
+            <a href="/productDetails/?id=${product.id}" class="btn btn-primary mt-auto">View Details</a>
           </div>
         </div>
       </div>

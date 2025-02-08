@@ -4,9 +4,10 @@
   "description": "A web app that makes online shopping more interactive. Instead of just browsing and buying, users can comment on and like products, creating a space where people can share their thoughts and experiences.",
   "main": "main.js",
   "scripts": {
-    "start": "vite",
-    "build": "vite build --emptyOutDir",
+    "dev": "vite",
+    "build": "vite build",
     "preview": "vite preview",
+    "start": "vite preview --host 0.0.0.0 --port $PORT",
     "lint": "eslint *.js src/**/*.js",
     "format": "prettier --ignore-path ./.gitignore --write \"./**/*.{html,json,js,ts,css}\"",
     "test": "jest"

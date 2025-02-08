@@ -12,8 +12,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: resolve(__dirname, "src/index.html"),
-        productDetails: resolve(__dirname, "src/productDetails/index.html"),
-        wishlist: resolve(__dirname, "src/wishlist/index.html"),
+        'productDetails/index': resolve(__dirname, "src/productDetails/index.html"),
+        'wishlist/index': resolve(__dirname, "src/wishlist/index.html"),
       },
       output: {
         chunkFileNames: 'js/[name]-[hash].js',
