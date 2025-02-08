@@ -36,11 +36,17 @@ export function renderWithTemplate(
 }
 
 export async function loadTemplate(path) {
-  const res = await fetch(path);
-  const template = await res.text();
-  const templateEl = document.createElement('template');
-  templateEl.innerHTML = template;
-  return templateEl;
+  try {
+    const res = await fetch(path);
+    if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+    const template = await res.text();
+    const templateEl = document.createElement('template');
+    templateEl.innerHTML = template;
+    return templateEl;
+  } catch (error) {
+    logError(error, 'loading template');
+    return null;
+  }
 }
 
 export async function loadHeaderFooter() {
@@ -130,4 +136,15 @@ export function updateWishlistCount() {
     countElement.textContent = items.length;
     countElement.style.display = items.length > 0 ? 'inline' : 'none';
   }
+}
+
+export function isProd() {
+  return import.meta.env.PROD;
+}
+
+export function logError(error, context = '') {
+  if (!isProd()) {
+    console.error(`Error ${context}:`, error);
+  }
+  // In production you might want to send to an error tracking service
 }
